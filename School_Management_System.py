@@ -87,6 +87,11 @@ class School_Management_System:
         self.phone = set()
         self.address = set()
         self.enrollment_no = set()
+        self.Courses = []
+        self.Unique_course_id = []
+        self.Course_name = []
+        self.Course_Description = []
+
 
     def  display_menu(self):
         print("\nSchool Management System\n")
@@ -112,8 +117,70 @@ class School_Management_System:
         if not address:
             print("Address is required")
             return
-        if not enrollment_no:
-            print("enrollment is required")
+        if  enrollment_no in self.enrollment_no:
+            print("Enrollment number must be unique.")
             return
         
-    
+        program_stream = self.Course_Management()
+        student = {
+            "id": self.current_id,
+            "name": name,
+            "email": email,
+            "Address" : self.address,
+            "Course" : self.Courses,
+            "enrollment_number": self.enrollment_no,
+            "program_stream": program_stream
+        }   
+        self.students.append(student)
+        self.email.add(email)
+        self.unique_ID+=1
+        self.enrollment_no.add(enrollment_no)
+        self.address.add(address)
+        print("Details add successfully")
+
+    def Course_Management(self):
+        print("Choose Course program stream ")
+        print("1. B.Tech")
+        print("2. BBA")
+        print("3. MCA")
+        choice = input("Enter your choice: ")
+        if choice == '1':
+            return "B.Tech"
+        elif choice == '2':     
+            return "BBA"
+        elif choice == '3':
+            return "MCA"
+        else:
+            print("Invalid choice. Defaulting to 'B.Tech'.")
+            return "B.Tech"
+        Unique_Course_ID = input("Enter the Course_ID")
+        Course_name = input("Enter the Cousre name")
+        Course_Description = input("Enter the course_Description")
+
+        course = {
+            "ID" : self.Unique_course_id,
+            "Course_name" : self.Course_name,
+            "Course_Description" : self.Course_Description
+
+        }
+        self.Unique_course_id.add(Unique_Course_ID)
+        self.Course_name.add(Course_name)
+        self.Course_Description.add(Course_Description)
+
+    def run(self):
+        while True:
+            self.display_menu()
+            choice = input("Enter your choice: ")
+            if choice == '1':
+                self.Staff
+            elif choice == '2':
+                self.Staff
+                break
+            else:
+                print("Invalid choice. Please try again.")
+
+
+
+if __name__ == "__main__":
+    system = School_Management_System()
+    system.run()

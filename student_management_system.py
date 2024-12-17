@@ -81,7 +81,7 @@ class StudentManagementSystem:
         if not name:
             print("Name is required.")
             return
-        if not email:
+        if not email: 
             print("Email is required.")
             return
         if enrollment_number in self.enrollment_numbers:
@@ -114,7 +114,7 @@ class StudentManagementSystem:
         choice = input("Enter your choice: ")
         if choice == '1':
             return "B.Tech"
-        elif choice == '2':
+        elif choice == '2':     
             return "BBA"
         elif choice == '3':
             return "MCA"
