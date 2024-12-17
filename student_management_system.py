@@ -60,7 +60,7 @@ class StudentManagementSystem:
     def __init__(self):
         self.students = []
         self.enrollment_numbers = set()
-        self.emails = set()
+        self.emails = set() 
         self.current_id = 1
 
     def display_menu(self):
