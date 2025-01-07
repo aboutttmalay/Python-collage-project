@@ -1,151 +1,15 @@
 import sqlite3
 import hashlib
-
-# Initialize the database and tables
-def initialize_database():
-    connection = sqlite3.connect("report_card_system.db")
-    cursor = connection.cursor()
-
-    # Create users table
-    cursor.execute('''CREATE TABLE IF NOT EXISTS users (
-                        username TEXT PRIMARY KEY,
-                        password TEXT NOT NULL
-                      )''')
-
-    # Create students table
-    cursor.execute('''CREATE TABLE IF NOT EXISTS students (
-                        student_id TEXT PRIMARY KEY,
-                        name TEXT NOT NULL
-                      )''')
-
-    # Create subjects table
-    cursor.execute('''CREATE TABLE IF NOT EXISTS subjects (
-                        subject_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        student_id TEXT NOT NULL,
-                        subject_name TEXT NOT NULL,
-                        FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE
-                      )''')
-
-    # Create marks table
-    cursor.execute('''CREATE TABLE IF NOT EXISTS marks (
-                        mark_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        student_id TEXT NOT NULL,
-                        subject_name TEXT NOT NULL,
-                        grade TEXT NOT NULL,
-                        FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE
-                      )''')
-
-    connection.commit()
-    connection.close()
+from Admin_Panel import add_student, update_student, assign_grades
+from login_pages import hash_password, sign_up, sign_in
+from database_files import initialize_database
 
 class StudentReportCardSystem:
 
     def __init__(self):
         initialize_database()
 
-    def hash_password(self, password):
-        return hashlib.sha256(password.encode()).hexdigest()
-
-    def sign_up(self):
-        connection = sqlite3.connect("report_card_system.db")
-        cursor = connection.cursor()
-
-        username = input("Enter username: ")
-        password = input("Enter password: ")
-
-        hashed_password = self.hash_password(password)
-
-        cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
-        connection.commit()
-        connection.close()
-
-        print(f"User {username} signed up")
-
-    def sign_in(self):
-        connection = sqlite3.connect("report_card_system.db")
-        cursor = connection.cursor()
-
-        username = input("Enter username: ")
-        password = input("Enter password: ")
-
-        hashed_password = self.hash_password(password)
-
-        cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, hashed_password))
-        user = cursor.fetchone()
-        connection.close()
-
-        if user:
-            print(f"User {username} signed in")
-            return True
-        else:
-            print("Invalid username or password")
-            return False
-
-    def add_student(self):
-        connection = sqlite3.connect("report_card_system.db")
-        cursor = connection.cursor()
-
-        student_id = input("Enter student ID: ")
-        name = input("Enter student name: ")
-
-        cursor.execute("INSERT INTO students (student_id, name) VALUES (?, ?)", (student_id, name))
-        connection.commit()
-        connection.close()
-
-        print(f"Student {name} added successfully!")
-
-    def update_student(self):
-        connection = sqlite3.connect("report_card_system.db")
-        cursor = connection.cursor()
-
-        student_id = input("Enter student ID to update: ")
-        cursor.execute("SELECT * FROM students WHERE student_id = ?", (student_id,))
-        student = cursor.fetchone()
-
-        if not student:
-            print("Student not found.")
-            return
-
-        new_name = input(f"Enter new name for {student[1]}: ")
-        cursor.execute("UPDATE students SET name = ? WHERE student_id = ?", (new_name, student_id))
-        connection.commit()
-        connection.close()
-
-        print(f"Student {new_name} updated successfully!")
-
-    def delete_student(self):
-        connection = sqlite3.connect("report_card_system.db")
-        cursor = connection.cursor()
-
-        student_id = input("Enter student ID to delete: ")
-        cursor.execute("DELETE FROM students WHERE student_id = ?", (student_id,))
-        connection.commit()
-        connection.close()
-
-        print(f"Student with ID {student_id} deleted successfully!")
-
-    def assign_grades(self):
-        connection = sqlite3.connect("report_card_system.db")
-        cursor = connection.cursor()
-
-        student_id = input("Enter student ID to assign grades: ")
-        cursor.execute("SELECT * FROM students WHERE student_id = ?", (student_id,))
-        student = cursor.fetchone()
-
-        if not student:
-            print("Student not found.")
-            return
-
-        subjects = input("Enter subjects separated by commas: ").split(',')
-
-        for subject in subjects:
-            grade = input(f"Enter grade for {subject}: ")
-            cursor.execute("INSERT INTO marks (student_id, subject_name, grade) VALUES (?, ?, ?)", (student_id, subject.strip(), grade))
-
-        connection.commit()
-        connection.close()
-
-        print(f"Grades assigned for student {student[1]}!")
+    
 
     def display_student_report(self):
         connection = sqlite3.connect("report_card_system.db")
@@ -200,13 +64,13 @@ class StudentReportCardSystem:
             choice = input("Enter your choice: ")
 
             if choice == '1':
-                self.add_student()
+                add_student()
             elif choice == '2':
-                self.update_student()
+                update_student()
             elif choice == '3':
                 self.delete_student()
             elif choice == '4':
-                self.assign_grades()
+                assign_grades()
             elif choice == '5':
                 self.display_student_report()
             elif choice == '6':
