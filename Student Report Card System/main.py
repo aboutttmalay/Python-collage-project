@@ -1,9 +1,16 @@
 import sqlite3
+import hashlib
 
 # Initialize the database and tables
 def initialize_database():
     connection = sqlite3.connect("report_card_system.db")
     cursor = connection.cursor()
+
+    # Create users table
+    cursor.execute('''CREATE TABLE IF NOT EXISTS users (
+                        username TEXT PRIMARY KEY,
+                        password TEXT NOT NULL
+                      )''')
 
     # Create students table
     cursor.execute('''CREATE TABLE IF NOT EXISTS students (
@@ -35,6 +42,44 @@ class StudentReportCardSystem:
 
     def __init__(self):
         initialize_database()
+
+    def hash_password(self, password):
+        return hashlib.sha256(password.encode()).hexdigest()
+
+    def sign_up(self):
+        connection = sqlite3.connect("report_card_system.db")
+        cursor = connection.cursor()
+
+        username = input("Enter username: ")
+        password = input("Enter password: ")
+
+        hashed_password = self.hash_password(password)
+
+        cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
+        connection.commit()
+        connection.close()
+
+        print(f"User {username} signed up")
+
+    def sign_in(self):
+        connection = sqlite3.connect("report_card_system.db")
+        cursor = connection.cursor()
+
+        username = input("Enter username: ")
+        password = input("Enter password: ")
+
+        hashed_password = self.hash_password(password)
+
+        cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, hashed_password))
+        user = cursor.fetchone()
+        connection.close()
+
+        if user:
+            print(f"User {username} signed in")
+            return True
+        else:
+            print("Invalid username or password")
+            return False
 
     def add_student(self):
         connection = sqlite3.connect("report_card_system.db")
@@ -126,12 +171,31 @@ class StudentReportCardSystem:
     def main(self):
         while True:
             print("\nStudent Report Card System")
+            print("1. Sign Up")
+            print("2. Sign In")
+            print("3. Exit")
+
+            choice = input("Enter your choice: ")
+
+            if choice == '1':
+                self.sign_up()
+            elif choice == '2':
+                if self.sign_in():
+                    self.run_system()
+            elif choice == '3':
+                break
+            else:
+                print("Invalid choice, please try again.")
+
+    def run_system(self):
+        while True:
+            print("\nStudent Report Card System")
             print("1. Add Student")
             print("2. Update Student")
             print("3. Delete Student")
             print("4. Assign Grades")
             print("5. Display Student Report")
-            print("6. Exit")
+            print("6. Logout")
 
             choice = input("Enter your choice: ")
 
