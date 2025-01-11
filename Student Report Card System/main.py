@@ -2,6 +2,7 @@ from admin_panel import AdminPanel
 from marks_management import MarksManagement
 from reports import Reports
 
+
 def main():
     admin_panel = AdminPanel()
     marks_management = MarksManagement()
@@ -28,6 +29,7 @@ def main():
             break
         else:
             print("Invalid choice, please try again.")
+
 
 if __name__ == "__main__":
     main()
